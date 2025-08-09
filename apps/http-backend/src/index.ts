@@ -1,5 +1,6 @@
 import express from "express";
 import { CreateUserSchema, SignInUserSchema } from "@repo/common/types";
+import { JWT_SECRET } from "@repo/backend-common/secret";
 import jwt from "jsonwebtoken";
 import { middleware } from "./middleware";
 
