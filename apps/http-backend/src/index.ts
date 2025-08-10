@@ -6,7 +6,8 @@ import { middleware } from "./middleware";
 import { prismaClient } from "@repo/db/client";
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
+app.listen(3001);
 
 app.post("/signup", async (req, res) => {
     try {
@@ -71,8 +72,12 @@ app.post("/signin", async(req, res) => {
                 password
             }
         })
+        console.log("the existingUser is", existingUser);
+        
         if(existingUser) {
-            const token = jwt.sign(existingUser?.id, JWT_SECRET);
+            const token = jwt.sign({
+                userId: existingUser?.id
+            }, JWT_SECRET);
             
             res.status(200).json({
                 "message": "Signin successfully!!",
@@ -124,4 +129,25 @@ app.post("/room", middleware, async (req, res) => {
     }
 })
 
-app.listen(3001);
+app.get("/chats/:roomId", middleware, async(req, res) => {
+    const roomId = Number(req.params.roomId);
+    try {
+        const messages = await prismaClient.chat.findMany({
+            where: {
+                roomId
+            },
+            orderBy: {
+                id: "desc"
+            },
+            take: 50
+        })
+
+        res.status(200).json({
+            messages
+        })
+    } catch(e) {
+        res.status(411).json({
+            error: e
+        })
+    }
+});
