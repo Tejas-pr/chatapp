@@ -4,14 +4,12 @@ import { JWT_SECRET } from "@repo/backend-common/secret";
 
 export function middleware(req: Request, res: Response, next: NextFunction) {
     const token = req.headers["authorization"] ?? "";
-    if (!process.env.JWT_SECRET) {
-        throw new Error('JWT_SECRET environment variable is not set');
-    }
     const decode = jwt.verify(token, JWT_SECRET);
+    console.log("the decode=================", decode)
 
     if(decode) {
         // @ts-ignore - fix this
-        req.userId = decode.userId;
+        req.userId = decode;
         next();
     } else {
         res.status(403).json({
