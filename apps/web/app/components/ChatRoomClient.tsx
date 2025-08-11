@@ -34,7 +34,7 @@ export function ChatRoomClient({
 
   return (
     <div>
-      {messages.map((m) => (
+      {chats.map((m) => (
         <div>{m.message}</div>
       ))}
       <input type="text" placeholder="send message...." value={currentMessage} onChange={e => {

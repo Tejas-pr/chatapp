@@ -6,6 +6,8 @@ export function useSocket() {
     const [socket, setSocket] = useState<WebSocket>();
 
     useEffect(() => {
+        // add token
+        // first store the token in local
         const ws = new WebSocket(WS_URL);
         ws.onopen = () => {
             setLoading(false);
