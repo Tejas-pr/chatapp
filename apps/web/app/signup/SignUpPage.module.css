@@ -1,0 +1,532 @@
+/* Sign Up Page Styles */
+.signUpPage {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  z-index: 10;
+}
+
+/* Animated background elements */
+.bgElements {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floatingShape {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.shape1 {
+  width: 120px;
+  height: 120px;
+  top: 10%;
+  left: 5%;
+  animation-delay: 0s;
+}
+
+.shape2 {
+  width: 180px;
+  height: 180px;
+  top: 70%;
+  right: 10%;
+  animation-delay: 2s;
+}
+
+.shape3 {
+  width: 90px;
+  height: 90px;
+  bottom: 30%;
+  left: 70%;
+  animation-delay: 4s;
+}
+
+.shape4 {
+  width: 140px;
+  height: 140px;
+  top: 40%;
+  left: 15%;
+  animation-delay: 6s;
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg) scale(1); 
+  }
+  33% { 
+    transform: translateY(-15px) rotate(120deg) scale(1.05); 
+  }
+  66% { 
+    transform: translateY(10px) rotate(240deg) scale(0.95); 
+  }
+}
+
+/* Sign Up Card */
+.signUpCard {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.signUpCard:hover {
+  transform: translateY(-5px);
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.cardHeader h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cardHeader p {
+  opacity: 0.9;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Form Styles */
+.signUpForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nameFields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #4ecdc4;
+  margin-bottom: 4px;
+}
+
+.inputGroup input {
+  padding: 16px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  width: 100%;
+}
+
+.inputGroup input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.inputGroup input:focus {
+  outline: none;
+  border-color: #4ecdc4;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.2);
+  transform: translateY(-2px);
+}
+
+.inputGroup input.error {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.inputGroup input.error:focus {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
+}
+
+/* Password Input */
+.passwordInput {
+  position: relative;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.passwordToggle:hover {
+  color: #4ecdc4;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Password Strength */
+.passwordStrength {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.strengthBar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.strengthFill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.passwordStrength span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+/* Checkbox */
+.checkboxGroup {
+  margin: 8px 0;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  position: relative;
+}
+
+.checkbox {
+  display: none;
+}
+
+.checkmark {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  margin-top: 2px;
+}
+
+.checkbox:checked + .checkmark {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  border-color: transparent;
+}
+
+.checkbox:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Links */
+.link {
+  color: #4ecdc4;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.link:hover {
+  color: #ff6b6b;
+  text-decoration: underline;
+}
+
+/* Error Messages */
+.errorMessage {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.errorMessage::before {
+  content: '⚠️';
+  font-size: 0.8rem;
+}
+
+/* Submit Button */
+.submitButton {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  color: white;
+  border: none;
+  padding: 18px 24px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.submitButton:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+/* Loader */
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 32px 0;
+  opacity: 0.7;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.divider span {
+  padding: 0 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Social Sign Up */
+.socialSignUp {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.socialButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.socialButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.socialIcon {
+  font-size: 1.2rem;
+}
+
+/* Sign In Prompt */
+.signInPrompt {
+  text-align: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.signInPrompt p {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .signUpPage {
+    padding: 15px;
+  }
+  
+  .signUpCard {
+    padding: 30px 24px;
+  }
+  
+  .nameFields {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .cardHeader h1 {
+    font-size: 2rem;
+  }
+  
+  .inputGroup input {
+    padding: 14px 16px;
+  }
+  
+  .socialSignUp {
+    gap: 10px;
+  }
+  
+  .socialButton {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    max-width: 100%;
+  }
+  
+  .signUpCard {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+  
+  .cardHeader h1 {
+    font-size: 1.75rem;
+  }
+  
+  .cardHeader p {
+    font-size: 0.9rem;
+  }
+  
+  .inputGroup input {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+  
+  .submitButton {
+    padding: 16px 20px;
+    font-size: 1rem;
+  }
+  
+  .checkboxLabel {
+    font-size: 0.85rem;
+  }
+  
+  .passwordToggle {
+    right: 12px;
+  }
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .signUpCard {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  
+  .inputGroup input {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .socialButton {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Focus visible for accessibility */
+.submitButton:focus-visible,
+.socialButton:focus-visible,
+.inputGroup input:focus-visible {
+  outline: 2px solid #4ecdc4;
+  outline-offset: 2px;
+}
+
+/* Animation for form appearance */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.signUpCard {
+  animation: slideUp 0.6s ease-out;
+}
