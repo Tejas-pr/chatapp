@@ -4,7 +4,6 @@ import { ChatRoomClient } from "./ChatRoomClient";
 
 async function getChats(roomId: string) {
     const response = await axios.get(`${BACKEND_URL}/chats/${roomId}`);
-    console.log("the room log is : ==================", response.data);
     return response.data.messages;
 }
 export async function ChatRoom({ id }: {

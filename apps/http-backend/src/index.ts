@@ -1,13 +1,20 @@
 import express from "express";
 import { CreateRoomSchema, CreateUserSchema, SignInUserSchema } from "@repo/common/types";
-import { JWT_SECRET } from "@repo/backend-common/secret";
+import { JWT_SECRET, CORS_ORIGIN_FE, PORT_BE } from "@repo/backend-common/secret";
 import jwt from "jsonwebtoken";
 import { middleware } from "./middleware";
 import { prismaClient } from "@repo/db/client";
+import cors from "cors";
 
 const app = express();
+
+app.use(cors());
+
 app.use(express.json());
-app.listen(3001);
+
+app.listen(PORT_BE, () => {
+  console.log(`Server running on ${PORT_BE}`);
+});
 
 app.post("/signup", async (req, res) => {
     try {
