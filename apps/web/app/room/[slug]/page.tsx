@@ -10,6 +10,8 @@ type RoomResponse = {
 };
 
 async function getRoomId(slug: string, token: string) {
+  const tokenn = token;
+  console.log("the tpken is ", tokenn)
   const response = await axios.get<RoomResponse>(
     `${BACKEND_URL}/room/${slug}`,
     {
@@ -27,12 +29,17 @@ async function getRoomId(slug: string, token: string) {
 
 export default async function ChatRoom1({
   params,
+  searchParams,
 }: {
-  params: { slug: string; token: string };
+  params: { slug: string };
+  searchParams: { token?: string };
 }) {
+  const tokenValue = searchParams.token;
+  if(!tokenValue) {
+    redirect("/roomenter");
+  }
   const slug = params.slug;
-  const token = params.token;
-  const roomId = await getRoomId(slug, token);
+  const roomId = await getRoomId(slug, tokenValue);
 
   if (!roomId) {
     redirect("/roomenter");
@@ -40,7 +47,7 @@ export default async function ChatRoom1({
 
   return (
     <div>
-      <ChatRoom id={roomId} authToken={token}/>
+      <ChatRoom id={roomId} authToken={tokenValue}/>
     </div>
   );
 }

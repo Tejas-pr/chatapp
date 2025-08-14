@@ -17,17 +17,7 @@ export default function RoomEnter() {
   const [createRoom, SetCreateRoom] = useState("");
   const [token, SetToken] = useState("");
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("chat-app-token");
-    if(token) {
-      SetToken(token);
-      getRooms(token);
-    } else {
-      alert("please log in!!!");
-      navigate.push(`/signin`);
-    }
-  }, []);
+  const [loaded, setLoaded] = useState(false);
 
   const getRooms = async (authToken: string) => {
     try {
@@ -48,14 +38,30 @@ export default function RoomEnter() {
     }
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("chat-app-token");
+    if (token) {
+      SetToken(token);
+      getRooms(token);
+    } else {
+      alert("please log in!!!");
+      navigate.push(`/signin`);
+    }
+    setLoaded(true);
+  }, []);
+
+  if (!loaded) {
+    return null;
+  }
+
   const navigateToSlug = (room: any) => {
     console.log(room.slug);
-    if(!room) {
+    if (!room) {
       alert("there is no room, please create new room!!!");
     }
     const slug = room.slug;
     navigate.push(`/room/${slug}?token=${token}`);
-  }
+  };
 
   const onClickButton = () => {
     navigate.push(`/room/${roomId}`);
@@ -71,26 +77,28 @@ export default function RoomEnter() {
             <div className="flex flex-col">
               <label className="text-sm text-gray-300 mb-2">Join Room</label>
               <input
-                className="border rounded-lg px-4 py-3 text-white focus:outline-none w-80"
+                className="border rounded-lg px-4 py-3 text-white focus:outline-none w-80 disabled:cursor-not-allowed"
                 type="text"
                 placeholder="Enter room name..."
                 value={roomId}
                 onChange={(e) => {
                   SetRoomId(e.target.value);
                 }}
+                disabled={!!createRoom}
               />
             </div>
 
             <div className="flex flex-col">
               <label className="text-sm text-gray-300 mb-2">Create Room</label>
               <input
-                className="border rounded-lg px-4 py-3 text-white focus:outline-none w-80"
+                className="border rounded-lg px-4 py-3 text-white focus:outline-none w-80 disabled:cursor-not-allowed"
                 type="text"
                 placeholder="Room name..."
                 value={createRoom}
                 onChange={(e) => {
                   SetCreateRoom(e.target.value);
                 }}
+                disabled={!!roomId}
               />
             </div>
           </div>
@@ -98,10 +106,14 @@ export default function RoomEnter() {
           {/* Action Button */}
           <div className="flex items-center justify-center">
             <button
+              disabled={!roomId && !createRoom}
               onClick={onClickButton}
-              className="bg-gradient-to-r from-[#ff6b6b] to-[#4ecdc4] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+              className={`bg-gradient-to-r from-[#ff6b6b] to-[#4ecdc4] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+                !roomId && !createRoom ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              {roomId ? "Join Room" : "Create/Join"}
+              {!(roomId || createRoom) ? "Create/Join Room" : null}
+              {roomId ? "Join Room" : ""}
               {createRoom ? "Create Room" : ""}
             </button>
           </div>

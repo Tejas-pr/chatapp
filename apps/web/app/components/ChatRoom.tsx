@@ -15,5 +15,5 @@ export async function ChatRoom({ id, authToken }: {
     authToken: string
 }) {
     const messages = await getChats(id, authToken);
-    return <ChatRoomClient id={id} messages={messages}></ChatRoomClient>
+    return <ChatRoomClient id={id} messages={messages} currentUserId={id}></ChatRoomClient>
 }
