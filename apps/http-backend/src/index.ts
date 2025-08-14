@@ -144,7 +144,7 @@ app.get("/chats/:roomId", async(req, res) => {
                 roomId
             },
             orderBy: {
-                id: "desc"
+                id: "asc"
             },
             take: 50
         })
@@ -170,6 +170,20 @@ app.get("/room/:slug", async(req, res) => {
 
         res.status(200).json({
             slugValue
+        })
+    } catch(e) {
+        res.status(411).json({
+            error: e
+        })
+    }
+});
+
+app.get("/allrooms", async(req, res) => {
+    try {
+        const rooms = await prismaClient.room.findMany();
+
+        res.status(200).json({
+            rooms
         })
     } catch(e) {
         res.status(411).json({

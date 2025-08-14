@@ -27,6 +27,7 @@ const SignUpPage = () => {
       return;
     }
     try {
+      console.log("hitting=================");
       const response = await axios.post(`${BACKEND_URL}/signin`, {
         email: formData.email,
         password: formData.password,
@@ -35,6 +36,16 @@ const SignUpPage = () => {
       if (!response.data) {
         alert("Failed to sign up. Please try again later.");
         setIsLoading(false);
+        return;
+      }
+
+      if(response.data) {
+        const token = response.data.token;
+        localStorage.setItem("chat-app-token", token);
+      } else {
+        alert("please sign in again");
+        setIsLoading(false);
+        router.push("/signin");
         return;
       }
 
