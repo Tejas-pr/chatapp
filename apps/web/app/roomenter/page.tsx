@@ -1,8 +1,8 @@
 "use client";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../config";
+import { useRouter } from "next/navigation";
 
 type Room = {
   id: number;
@@ -19,18 +19,37 @@ export default function RoomEnter() {
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [loaded, setLoaded] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("chat-app-token");
+    if (!token) {
+      alert("please log in!!!");
+      navigate.push(`/signin`);
+      return;
+    }
+
+    SetToken(token);
+
+    const storedRooms = localStorage.getItem("availableRooms-chat-app");
+    if (storedRooms) {
+      setAvailableRooms(JSON.parse(storedRooms));
+      setLoaded(true);
+    } else {
+      getRooms(token).then(() => setLoaded(true));
+    }
+  }, []);
+
   const getRooms = async (authToken: string) => {
     try {
       const response = await axios.get(`${BACKEND_URL}/allrooms`, {
-        headers: {
-          Authorization: `${authToken}`,
-        },
+        headers: { Authorization: `${authToken}` },
       });
 
-      if (response.data && response.data.rooms) {
+      if (response.data?.rooms) {
         setAvailableRooms(response.data.rooms);
-      } else {
-        alert("Failed to get the rooms");
+        localStorage.setItem(
+          "availableRooms-chat-app",
+          JSON.stringify(response.data.rooms)
+        );
       }
     } catch (error) {
       console.error("Error fetching rooms:", error);
@@ -38,21 +57,37 @@ export default function RoomEnter() {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("chat-app-token");
-    if (token) {
-      SetToken(token);
-      getRooms(token);
-    } else {
-      alert("please log in!!!");
-      navigate.push(`/signin`);
-    }
-    setLoaded(true);
-  }, []);
-
   if (!loaded) {
     return null;
   }
+
+  const createNewRoom = async () => {
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/room`,
+        { name: createRoom },
+        { headers: { Authorization: `${token}` } }
+      );
+
+      if (response.data && response.data.room) {
+        setAvailableRooms((prev) => {
+          const updatedRooms = [...prev, response.data.room];
+          localStorage.setItem(
+            "availableRooms-chat-app",
+            JSON.stringify(updatedRooms)
+          );
+          return updatedRooms;
+        });
+      }
+    } catch (e: any) {
+      console.error(e);
+      if (e.response?.data?.message) {
+        alert(e.response.data.message);
+      } else {
+        alert("Something went wrong! Please try again.");
+      }
+    }
+  };
 
   const navigateToSlug = (room: any) => {
     console.log(room.slug);
@@ -63,16 +98,24 @@ export default function RoomEnter() {
     navigate.push(`/room/${slug}?token=${token}`);
   };
 
-   const onSubmit = () => {
-    console.log("the jon room ===========", roomId);
-    console.log("the jon room ===========", `/room/${roomId}?token=${token}`);
-    // navigate.push(`/room/${roomId}?token=${token}`);
-  }
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    if (roomId) {
+      navigate.push(`/room/${roomId}?token=${token}`);
+    }
+
+    if (createRoom) {
+      createNewRoom();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white">
       {/* Top Section - Join/Create Room */}
-      <form onSubmit={onSubmit} className="bg-gradient-to-r from-[#667eea] to-[#764ba2] p-8">
+      <form
+        onSubmit={onSubmit}
+        className="bg-gradient-to-r from-[#667eea] to-[#764ba2] p-8"
+      >
         <div className="max-w-4xl mx-auto">
           {/* Input Fields */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-8">
@@ -109,9 +152,8 @@ export default function RoomEnter() {
           <div className="flex items-center justify-center">
             <button
               disabled={!roomId && !createRoom}
-              className={`bg-gradient-to-r from-[#ff6b6b] to-[#4ecdc4] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-                !roomId && !createRoom ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-gradient-to-r from-[#ff6b6b] to-[#4ecdc4] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 transform hover:cursor-pointer active:scale-95 active:shadow-inner hover:scale-105
+              ${!roomId && !createRoom ? "opacity-50 cursor-not-allowed" : ""}`}
             >
               {!(roomId || createRoom) ? "Create/Join Room" : null}
               {roomId ? "Join Room" : ""}

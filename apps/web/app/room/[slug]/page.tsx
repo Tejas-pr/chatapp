@@ -10,36 +10,39 @@ type RoomResponse = {
 };
 
 async function getRoomId(slug: string, token: string) {
-  const tokenn = token;
-  console.log("the tpken is ", tokenn)
-  const response = await axios.get<RoomResponse>(
-    `${BACKEND_URL}/room/${slug}`,
-    {
-      headers: {
-        Authorization: `${token}`,
-      },
-    }
-  );
+  try {
+    const response = await axios.get<RoomResponse>(
+      `${BACKEND_URL}/room/${slug}`,
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
 
-  if (!response.data.slugValue) {
-    return null;
+    if (!response.data.slugValue) {
+      return null;
+    }
+    return response.data.slugValue.id;
+  } catch (e) {
+    console.error(e);
   }
-  return response.data.slugValue.id;
 }
 
 export default async function ChatRoom1({
   params,
-  searchParams,
+  searchParams
 }: {
   params: { slug: string };
   searchParams: { token?: string };
 }) {
-  const tokenValue = searchParams.token;
-  if(!tokenValue) {
+  const slug = params?.slug;
+  const token = searchParams?.token;
+
+  if (!token) {
     redirect("/roomenter");
   }
-  const slug = params.slug;
-  const roomId = await getRoomId(slug, tokenValue);
+  const roomId = await getRoomId(slug, token);
 
   if (!roomId) {
     redirect("/roomenter");
@@ -47,7 +50,7 @@ export default async function ChatRoom1({
 
   return (
     <div>
-      <ChatRoom id={roomId} authToken={tokenValue}/>
+      <ChatRoom id={roomId} authToken={token} />
     </div>
   );
 }
