@@ -1,28 +1,56 @@
-import axious from "axios"
+import axios from "axios";
 import { BACKEND_URL } from "../../config";
 import { ChatRoom } from "../../components/ChatRoom";
+import { redirect } from "next/navigation";
 
-async function getRoomId(slug: string) {
-    console.log("the slug catch is : ", slug);
-    const response = await axious.get(`${BACKEND_URL}/room/${slug}`);
-    console.log("the responme is ", response.data);
-    console.log("the responme is ", response.data.slugValue.id);
-    let id;
-    if(response.data) {
-        id = response.data.slugValue.id;
+type RoomResponse = {
+  slugValue: {
+    id: string;
+  } | null;
+};
+
+async function getRoomId(slug: string, token: string) {
+  try {
+    const response = await axios.get<RoomResponse>(
+      `${BACKEND_URL}/room/${slug}`,
+      {
+        headers: {
+          Authorization: `${token}`,
+        },
+      }
+    );
+
+    if (!response.data.slugValue) {
+      return null;
     }
-    return id;
+    return response.data.slugValue.id;
+  } catch (e) {
+    console.error(e);
+  }
 }
 
-export default async function ChatRoom1({ params } : { params: { slug: string } }){
-    const slug = params.slug;
-    console.log("the slug catch is : ", slug);
-    const roomId = await getRoomId(slug);
-    if(!roomId) {
-        alert("invaild entered value!!");
-    }
+export default async function ChatRoom1({
+  params,
+  searchParams
+}: {
+  params: { slug: string };
+  searchParams: { token?: string };
+}) {
+  const slug = params?.slug;
+  const token = searchParams?.token;
 
-    return <div>
-        <ChatRoom id={roomId}></ChatRoom>
+  if (!token) {
+    redirect("/roomenter");
+  }
+  const roomId = await getRoomId(slug, token);
+
+  if (!roomId) {
+    redirect("/roomenter");
+  }
+
+  return (
+    <div>
+      <ChatRoom id={roomId} authToken={token} slug={slug}/>
     </div>
+  );
 }
