@@ -10,10 +10,11 @@ async function getChats(roomId: string, authToken: string) {
     });
     return response.data.messages;
 }
-export async function ChatRoom({ id, authToken }: {
+export async function ChatRoom({ id, authToken, slug }: {
     id: string,
-    authToken: string
+    authToken: string,
+    slug?: string
 }) {
     const messages = await getChats(id, authToken);
-    return <ChatRoomClient id={id} messages={messages} currentUserId={id}></ChatRoomClient>
+    return <ChatRoomClient id={id} messages={messages} currentUserId={id} slug={slug}/>
 }

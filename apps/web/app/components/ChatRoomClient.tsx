@@ -12,10 +12,12 @@ export function ChatRoomClient({
   messages,
   id,
   currentUserId,
+  slug,
 }: {
   messages: ChatMessage[];
   id: string;
   currentUserId: string;
+  slug?: string;
 }) {
   const { socket, loading } = useSocket();
   const [chats, setChats] = useState(messages);
@@ -66,8 +68,15 @@ export function ChatRoomClient({
       <div className="absolute right-0 top-0 h-full w-1/4 bg-gradient-to-l from-purple-700 to-transparent pointer-events-none" />
 
       {/* Chat Content */}
-      <div className="relative flex flex-col mx-auto w-full max-w-3xl h-full border-l border-r border-slate-800">
+      <div className="relative flex flex-col mx-auto w-full max-w-5xl h-full border-l border-r border-slate-800">
         {/* Messages */}
+        <h1 className="text-2xl mt-2 md:text-3xl font-bold bg-gradient-to-r from-[#ff6b6b] to-[#4ecdc4] bg-clip-text text-transparent text-center">
+          Chat App
+        </h1>
+        <p className="text-sm mt-1 font-semibold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent text-center">
+          {slug}
+        </p>
+
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {chats.map((m, index) => {
             const isMine = m.userId === currentUserId;

@@ -50,7 +50,7 @@ export default async function ChatRoom1({
 
   return (
     <div>
-      <ChatRoom id={roomId} authToken={token} />
+      <ChatRoom id={roomId} authToken={token} slug={slug}/>
     </div>
   );
 }
