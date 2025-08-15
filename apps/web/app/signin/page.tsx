@@ -20,14 +20,12 @@ const SignUpPage = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simple validation
     if (!formData.email || !formData.password) {
       alert("Please fill all fields");
       setIsLoading(false);
       return;
     }
     try {
-      console.log("hitting=================");
       const response = await axios.post(`${BACKEND_URL}/signin`, {
         email: formData.email,
         password: formData.password,
