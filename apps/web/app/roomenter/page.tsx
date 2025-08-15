@@ -63,14 +63,16 @@ export default function RoomEnter() {
     navigate.push(`/room/${slug}?token=${token}`);
   };
 
-  const onClickButton = () => {
-    navigate.push(`/room/${roomId}`);
-  };
+   const onSubmit = () => {
+    console.log("the jon room ===========", roomId);
+    console.log("the jon room ===========", `/room/${roomId}?token=${token}`);
+    // navigate.push(`/room/${roomId}?token=${token}`);
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white">
       {/* Top Section - Join/Create Room */}
-      <div className="bg-gradient-to-r from-[#667eea] to-[#764ba2] p-8">
+      <form onSubmit={onSubmit} className="bg-gradient-to-r from-[#667eea] to-[#764ba2] p-8">
         <div className="max-w-4xl mx-auto">
           {/* Input Fields */}
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-8">
@@ -107,7 +109,6 @@ export default function RoomEnter() {
           <div className="flex items-center justify-center">
             <button
               disabled={!roomId && !createRoom}
-              onClick={onClickButton}
               className={`bg-gradient-to-r from-[#ff6b6b] to-[#4ecdc4] hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
                 !roomId && !createRoom ? "opacity-50 cursor-not-allowed" : ""
               }`}
@@ -118,7 +119,7 @@ export default function RoomEnter() {
             </button>
           </div>
         </div>
-      </div>
+      </form>
 
       {/* Available Rooms Section */}
       <div className="max-w-4xl mx-auto p-8">
