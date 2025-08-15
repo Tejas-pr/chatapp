@@ -18,6 +18,7 @@ export default function RoomEnter() {
   const [token, SetToken] = useState("");
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("chat-app-token");
@@ -109,6 +110,11 @@ export default function RoomEnter() {
     }
   };
 
+  const filteredRooms = availableRooms.filter((room) => {
+    if (!searchTerm) return true;
+    return room.slug.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white">
       {/* Top Section - Join/Create Room */}
@@ -173,6 +179,8 @@ export default function RoomEnter() {
             <input
               type="text"
               placeholder="Search rooms..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full border rounded-lg px-4 py-3 pl-10 text-white focus:outline-none focus:ring-2 focus:border-transparent"
             />
             <svg
@@ -193,7 +201,7 @@ export default function RoomEnter() {
 
         {/* Room Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {availableRooms.map((room) => (
+          {filteredRooms.map((room) => (
             <div
               key={room.id}
               onClick={() => navigateToSlug(room)}
@@ -205,6 +213,12 @@ export default function RoomEnter() {
               </div>
             </div>
           ))}
+          {filteredRooms.length === 0 && searchTerm && (
+            <div className="col-span-full text-center text-gray-400 py-6">
+              No rooms found for "
+              <span className="text-white">{searchTerm}</span>"
+            </div>
+          )}
         </div>
       </div>
     </div>
