@@ -1,5 +1,5 @@
 {
-  "name": "@repo/db",
+  "name": "@repo/database",
   "version": "1.0.0",
   "scripts": {
     "migrate:dev": "prisma migrate dev",
@@ -7,7 +7,8 @@
     "db:push": "prisma db push",
     "db:reset": "prisma migrate reset",
     "generate": "prisma generate",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "dev": "tsx src/database.ts"
   },
   "dependencies": {
     "@prisma/client": "6.13.0",
@@ -20,10 +21,6 @@
     "typescript": "^5.9.2"
   },
   "exports": {
-    "./client": "./src/db.ts"
-  },
-  "type": "commonjs",
-  "prisma": {
-    "seed": "ts-node ./src/seed.ts"
-  } 
+    "./client": "./src/database.ts"
+  }
 }

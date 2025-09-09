@@ -8,12 +8,12 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
 
-    "db:migrate:dev": "turbo run migrate:dev --filter=@repo/db",
-    "db:migrate:deploy": "turbo run migrate:deploy --filter=@repo/db",
-    "db:push": "turbo run db:push --filter=@repo/db",
-    "db:reset": "turbo run db:reset --filter=@repo/db",
-    "db:generate": "turbo run generate --filter=@repo/db",
-    "db:studio": "turbo run studio --filter=@repo/db"
+    "db:migrate:dev": "turbo run migrate:dev --filter=@repo/database",
+    "db:migrate:deploy": "turbo run migrate:deploy --filter=@repo/database",
+    "db:push": "turbo run db:push --filter=@repo/database",
+    "db:reset": "turbo run db:reset --filter=@repo/database",
+    "db:generate": "turbo run generate --filter=@repo/database",
+    "db:studio": "turbo run studio --filter=@repo/database"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

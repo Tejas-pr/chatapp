@@ -44,7 +44,7 @@ const LandingPage = () => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const target = entry.target;
-            const finalValue = target.textContent;
+            const finalValue = target.textContent ?? "0";
             let currentValue = 0;
             const increment = parseFloat(finalValue.replace(/[^0-9.]/g, '')) / 50;
             
