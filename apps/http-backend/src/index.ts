@@ -16,91 +16,6 @@ app.listen(PORT_BE, () => {
   console.log(`Server running on ${PORT_BE}`);
 });
 
-app.post("/signup", async (req, res) => {
-    try {
-        const parsedData = CreateUserSchema.safeParse(req.body);
-        
-        if(!parsedData.success) {
-            res.status(400).json({
-                message: "invalid credentials"
-            })
-            return;
-        }
-
-        const { name, password, email } = parsedData.data;
-
-        const existingUser = await prismaClient.user.findFirst({
-            where: {
-                email
-            }
-        })
-        
-        if(existingUser) {
-            res.status(400).json({
-                "message": "User already exists!!!"
-            })
-            return;
-        }
-
-        const newUser = await prismaClient.user.create({
-            data: {
-                email,
-                password,
-                name
-            }
-        })
-
-        if(newUser) {
-            res.status(200).json({
-                "message": "User successfully created!!"
-            })
-        }
-    } catch (e) {
-        console.log("the error is : ", e);
-    }
-})
-
-app.post("/signin", async(req, res) => {
-    try {
-        const parsedData = SignInUserSchema.safeParse(req.body);
-
-        if(!parsedData.success) {
-            res.status(400).json({
-                message: "invalid credentials"
-            })
-            return;
-        }
-
-        const { email, password } = parsedData.data;
-
-        const existingUser = await prismaClient.user.findFirst({
-            where: {
-                email,
-                password
-            }
-        })
-        console.log("the existingUser is", existingUser);
-        
-        if(existingUser) {
-            const token = jwt.sign({
-                userId: existingUser?.id
-            }, JWT_SECRET);
-            
-            res.status(200).json({
-                "message": "Signin successfully!!",
-                token
-            });
-        } else {
-            res.status(404).json({
-                "message": "User don't exists!!"
-            });
-        }
-
-    } catch (e) {
-        console.log("the error is : ", e);
-    }
-})
-
 app.post("/room", middleware, async (req, res) => {
     try{
         const parsedData = CreateRoomSchema.safeParse(req.body);
@@ -110,8 +25,12 @@ app.post("/room", middleware, async (req, res) => {
             })
             return;
         }
-        // @ts-ignore
-        const userId = req.userId;
+
+        if (!req.user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const userId = req.user.id;
 
         const isRoom = await prismaClient.room.findFirst({
             where: {
@@ -193,8 +112,10 @@ app.get("/room/:slug", middleware, async(req, res) => {
 
 app.get("/allrooms", middleware, async(req, res) => {
     try {
-        // @ts-ignore
-        const userId = req.userId;
+        if(!req.user) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const userId = req.user?.id;
         const rooms = await prismaClient.room.findMany({
             where: {
                 adminId: userId
