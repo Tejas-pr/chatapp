@@ -3,6 +3,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
+import { LogoutButton } from "@/components/ui/logout";
+import { authClient } from "@repo/auth/client";
 
 type Room = {
   id: number;
@@ -21,36 +23,21 @@ export default function RoomEnter() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("chat-app-token");
-    if (!token) {
-      alert("please log in!!!");
-      navigate.push(`/signin`);
-      return;
-    }
-
-    SetToken(token);
-
     const storedRooms = localStorage.getItem("availableRooms-chat-app");
     if (storedRooms) {
       setAvailableRooms(JSON.parse(storedRooms));
       setLoaded(true);
     } else {
-      getRooms(token).then(() => setLoaded(true));
+      getRooms().then(() => setLoaded(true));
     }
   }, []);
 
-  const getRooms = async (authToken: string) => {
+  const getRooms = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/allrooms`, {
-        headers: { Authorization: `${authToken}` },
-      });
-
+      const response = await axios.get(`${BACKEND_URL}/allrooms`); 
       if (response.data?.rooms) {
         setAvailableRooms(response.data.rooms);
-        localStorage.setItem(
-          "availableRooms-chat-app",
-          JSON.stringify(response.data.rooms)
-        );
+        localStorage.setItem("availableRooms-chat-app",JSON.stringify(response.data.rooms));
       }
     } catch (error) {
       console.error("Error fetching rooms:", error);
@@ -117,6 +104,7 @@ export default function RoomEnter() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white">
+      <LogoutButton />
       {/* Top Section - Join/Create Room */}
       <form
         onSubmit={onSubmit}

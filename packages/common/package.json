@@ -9,7 +9,8 @@
     "@repo/typescript-config": "workspace:*"
   },
   "exports": {
-    "./types": "./src/types.ts"
+    "./types": "./src/types.ts",
+    "./type/session": "./src/type.session.ts"
   },
   "keywords": [],
   "author": "",

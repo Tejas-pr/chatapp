@@ -3,18 +3,29 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "dotenv -- turbo dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "turbo run check-types",
+
+    "db:migrate:dev": "turbo run migrate:dev --filter=@repo/db",
+    "db:migrate:deploy": "turbo run migrate:deploy --filter=@repo/db",
+    "db:push": "turbo run db:push --filter=@repo/db",
+    "db:reset": "turbo run db:reset --filter=@repo/db",
+    "db:generate": "turbo run generate --filter=@repo/db",
+    "db:studio": "turbo run studio --filter=@repo/db"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
     "turbo": "^2.5.5",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "dotenv-cli": "^10.0.0"
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "better-auth": "^1.3.8"
   }
 }

@@ -1,14 +1,26 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "@repo/backend-common/secret";
+import { auth, fromNodeHeaders } from "@repo/auth/auth";
+import { userSessionType } from "@repo/common/type/session";
 
-export function middleware(req: Request, res: Response, next: NextFunction) {
-    const token = req.headers["authorization"] ?? "";
-    const decode = jwt.verify(token, JWT_SECRET);
+declare global{
+    namespace Express{
+        interface Request {
+            user?: userSessionType
+        }
+    }
+}
 
-    if(decode) {
-        // @ts-ignore - fix this
-        req.userId = decode.userId;
+export async function middleware(req: Request, res: Response, next: NextFunction) {
+    const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.body)
+    });
+
+    if(!session) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    if(session) {
+        req.user = session.user;
         next();
     } else {
         res.status(403).json({
