@@ -17,7 +17,6 @@ export default function RoomEnter() {
   const navigate = useRouter();
   const [roomId, SetRoomId] = useState("");
   const [createRoom, SetCreateRoom] = useState("");
-  const [token, SetToken] = useState("");
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,12 +50,7 @@ export default function RoomEnter() {
 
   const createNewRoom = async () => {
     try {
-      const response = await axios.post(
-        `${BACKEND_URL}/room`,
-        { name: createRoom },
-        { headers: { Authorization: `${token}` } }
-      );
-
+      const response = await axios.post(`${BACKEND_URL}/room` ,{ name: createRoom });
       if (response.data && response.data.room) {
         setAvailableRooms((prev) => {
           const updatedRooms = [...prev, response.data.room];
@@ -83,13 +77,13 @@ export default function RoomEnter() {
       alert("there is no room, please create new room!!!");
     }
     const slug = room.slug;
-    navigate.push(`/room/${slug}?token=${token}`);
+    navigate.push(`/room/${slug}`);
   };
 
   const onSubmit = (e: any) => {
     e.preventDefault();
     if (roomId) {
-      navigate.push(`/room/${roomId}?token=${token}`);
+      navigate.push(`/room/${roomId}`);
     }
 
     if (createRoom) {

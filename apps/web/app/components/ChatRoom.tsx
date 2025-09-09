@@ -2,19 +2,14 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { ChatRoomClient } from "./ChatRoomClient";
 
-async function getChats(roomId: string, authToken: string) {
-    const response = await axios.get(`${BACKEND_URL}/chats/${roomId}`, {
-        headers: {
-            Authorization: `${authToken}`,
-        }
-    });
+async function getChats(roomId: string) {
+    const response = await axios.get(`${BACKEND_URL}/chats/${roomId}`);
     return response.data.messages;
 }
-export async function ChatRoom({ id, authToken, slug }: {
+export async function ChatRoom({ id, slug }: {
     id: string,
-    authToken: string,
     slug?: string
 }) {
-    const messages = await getChats(id, authToken);
+    const messages = await getChats(id);
     return <ChatRoomClient id={id} messages={messages} currentUserId={id} slug={slug}/>
 }

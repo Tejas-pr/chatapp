@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "@repo/db": "workspace:*",
+    "@repo/database": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3"
   },
