@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@repo/auth/client";
 import { Loader2 } from "lucide-react";
+import { auth } from "@repo/auth/auth";
 
 export function SignUpForm({
   className,
@@ -30,6 +31,7 @@ export function SignUpForm({
   });
 
   const onsubmit = async (e: any) => {
+    console.log("called onsubmit");
     e.preventDefault();
     setIsLoading(true);
 
@@ -90,12 +92,11 @@ export function SignUpForm({
       setIsLoading(false);
     }
   };
-  
   const signInWithGitHub = async () => {
     try {
       await authClient.signIn.social(
         {
-          provider: "google",
+          provider: "github",
           callbackURL: "/roomenter",
         },
         {
@@ -103,7 +104,7 @@ export function SignUpForm({
           onResponse: () => setIsLoading(false),
           onError: (error) => {
             console.error("Social login error:", error);
-            toast.error("GitHub login failed");
+            toast.error("Github login failed");
             setIsLoading(false);
           },
         }

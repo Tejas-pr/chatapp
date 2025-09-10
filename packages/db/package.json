@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "build": "tsc -b",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:dev": "npx prisma migrate dev",
     "db:push": "prisma db push",

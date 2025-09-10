@@ -1,10 +1,9 @@
 'use client'
 
-import axios from "axios";
 import { redirect } from "next/navigation";
-import { BACKEND_URL } from "../../config";
 import { ChatRoom } from "../../components/ChatRoom";
 import { useSearchParams } from 'next/navigation'
+import { creteNewRoom } from "action/room";
 
 type RoomResponse = {
   slugValue: { id: string } | null;
@@ -13,8 +12,9 @@ type RoomResponse = {
 async function getRoomId(slug: string | undefined) {
   if (!slug) return null;
   try {
-    const response = await axios.get<RoomResponse>(`${BACKEND_URL}/room/${slug}`);
-    return response.data.slugValue?.id ?? null;
+    const response = await creteNewRoom(slug);
+    console.log("the slug is : ", response);
+    // return response.data.slugValue?.id ?? null;
   } catch (e) {
     console.error(e);
     return null;

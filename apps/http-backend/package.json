@@ -19,7 +19,6 @@
     "@repo/db": "workspace:*"
   },
   "scripts": {
-    "build": "tsc -b"
   },
   "keywords": [],
   "author": "",
