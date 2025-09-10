@@ -12,7 +12,7 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@repo/backend-common": "workspace:*",
-    "@repo/database": "workspace:*"
+    "@repo/db": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b",
