@@ -1,9 +1,8 @@
 import express from "express";
-import { CreateRoomSchema, CreateUserSchema, SignInUserSchema } from "@repo/common/types";
-import { JWT_SECRET, CORS_ORIGIN_FE, PORT_BE } from "@repo/backend-common/secret";
-import jwt from "jsonwebtoken";
+import { CreateRoomSchema } from "@repo/common/types";
+import { PORT_BE } from "@repo/backend-common/secret";
 import { middleware } from "./middleware";
-import { prismaClient } from "@repo/database/client";
+import { prismaClient } from "@repo/db";
 import cors from "cors";
 
 const app = express();
