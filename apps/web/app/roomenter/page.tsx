@@ -76,10 +76,7 @@ export default function RoomEnter() {
 
   const createNewRoom = async () => {
     try {
-      console.log("tye of roommname: ",typeof(createRoom));
       const response = await creteNewRoom(createRoom);
-      console.log("the new created room is : ",response);
-
       if (response && response.room) {
         setAvailableRooms((prev) => {
           const updatedRooms = [...prev, response.room];
@@ -90,9 +87,9 @@ export default function RoomEnter() {
     } catch (e: any) {
       console.error(e);
       if (e.response?.data?.message) {
-        alert(e.response.data.message);
+        toast(e.response.data.message);
       } else {
-        alert("Something went wrong! Please try again.");
+        toast("Something went wrong! Please try again.");
       }
     }
   };
@@ -100,7 +97,7 @@ export default function RoomEnter() {
   const navigateToSlug = (room: any) => {
     console.log(room.slug);
     if (!room) {
-      alert("there is no room, please create new room!!!");
+      toast("there is no room, please create new room!!!");
     }
     const slug = room.slug;
     navigate.push(`/room/${slug}`);

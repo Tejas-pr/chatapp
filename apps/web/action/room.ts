@@ -3,7 +3,7 @@
 import { prismaClient } from "@repo/db";
 import { CreateRoomSchema } from "@repo/common/types";
 import { getUserSession } from "./utils";
-import { ZodError } from "zod";
+import { string, ZodError } from "zod";
 
 export const creteNewRoom = async (room: string) => {
   const session = await getUserSession();
@@ -61,7 +61,6 @@ export const creteNewRoom = async (room: string) => {
 export const getAllRooms = async () => {
   const session = await getUserSession();
   try {
-    console.log("the session is", session);
     if (!session) {
       return { error: "Unauthorized" };
     }
@@ -89,4 +88,31 @@ export const getAllRooms = async () => {
       console.error(error);
     }
   }
+};
+
+export const getRoomIdBySlug = async (slugname: string) => {
+    const session = await getUserSession();
+    try {
+        if (!session) {
+            return { error: "Unauthorized" };
+        }
+
+        if (!slugname || typeof slugname !== "string") {
+            return { error: "Invalid slug" };
+        }
+
+        const room = await prismaClient.room.findFirst({
+            where: {
+                slug: slugname
+            }
+        })
+
+        if (!room) {
+            return { error: "Room not found" };
+        }
+        return { roomId: room.id };
+
+    } catch (error) {
+        console.error(error);
+    }
 };
