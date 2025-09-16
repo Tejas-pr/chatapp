@@ -1,15 +1,15 @@
 "use client";
-import axios from "axios";
+
 import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
 import { LogoutButton } from "@/components/ui/logout";
-import { authClient } from "@repo/auth/client";
+import { creteNewRoom, getAllRooms } from "action/room";
+import { toast } from "sonner";
 
 type Room = {
   id: number;
   slug: string;
-  createdAt: string;
+  createdAt: Date;
   adminId: string;
 };
 
@@ -23,9 +23,22 @@ export default function RoomEnter() {
 
   useEffect(() => {
     const storedRooms = localStorage.getItem("availableRooms-chat-app");
+
     if (storedRooms) {
-      setAvailableRooms(JSON.parse(storedRooms));
-      setLoaded(true);
+      try {
+        const parsed = JSON.parse(storedRooms);
+
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAvailableRooms(parsed);
+          setLoaded(true);
+        } else {
+          toast("No rooms found in local storage. Please create or join a room.");
+          getRooms().then(() => setLoaded(true));
+        }
+      } catch (error) {
+        console.error("Failed to parse stored rooms:", error);
+        getRooms().then(() => setLoaded(true));
+      }
     } else {
       getRooms().then(() => setLoaded(true));
     }
@@ -33,16 +46,27 @@ export default function RoomEnter() {
 
   const getRooms = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/allrooms`); 
-      if (response.data?.rooms) {
-        setAvailableRooms(response.data.rooms);
-        localStorage.setItem("availableRooms-chat-app",JSON.stringify(response.data.rooms));
+      const response = await getAllRooms();
+
+      if (!response) {
+        toast("Unable to fetch rooms. Please try again later.");
+        return;
+      }
+
+      if (response.rooms?.length === 0) {
+        toast("No rooms available yet. Create a new room to start chatting.");
+      }
+
+      if (response.rooms) {
+        setAvailableRooms(response.rooms);
+        localStorage.setItem("availableRooms-chat-app",JSON.stringify(response.rooms));
       }
     } catch (error) {
+      toast("Something went wrong while fetching rooms.");
       console.error("Error fetching rooms:", error);
-      alert("Error fetching rooms");
     }
   };
+
 
   if (!loaded) {
     return null;
@@ -50,23 +74,20 @@ export default function RoomEnter() {
 
   const createNewRoom = async () => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/room` ,{ name: createRoom });
-      if (response.data && response.data.room) {
+      const response = await creteNewRoom(createRoom);
+      if (response && response.room) {
         setAvailableRooms((prev) => {
-          const updatedRooms = [...prev, response.data.room];
-          localStorage.setItem(
-            "availableRooms-chat-app",
-            JSON.stringify(updatedRooms)
-          );
+          const updatedRooms = [...prev, response.room];
+          localStorage.setItem("availableRooms-chat-app",JSON.stringify(updatedRooms));
           return updatedRooms;
         });
       }
     } catch (e: any) {
       console.error(e);
       if (e.response?.data?.message) {
-        alert(e.response.data.message);
+        toast(e.response.data.message);
       } else {
-        alert("Something went wrong! Please try again.");
+        toast("Something went wrong! Please try again.");
       }
     }
   };
@@ -74,7 +95,7 @@ export default function RoomEnter() {
   const navigateToSlug = (room: any) => {
     console.log(room.slug);
     if (!room) {
-      alert("there is no room, please create new room!!!");
+      toast("there is no room, please create new room!!!");
     }
     const slug = room.slug;
     navigate.push(`/room/${slug}`);

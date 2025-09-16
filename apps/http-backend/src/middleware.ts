@@ -12,7 +12,7 @@ declare global{
 
 export async function middleware(req: Request, res: Response, next: NextFunction) {
     const session = await auth.api.getSession({
-        headers: fromNodeHeaders(req.body)
+        headers: fromNodeHeaders(req.headers)
     });
 
     if(!session) {

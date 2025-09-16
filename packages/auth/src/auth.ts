@@ -1,5 +1,5 @@
 import { prismaClient } from "@repo/db";
-import { betterAuth, jwt } from 'better-auth'
+import { betterAuth } from 'better-auth'
 export { fromNodeHeaders, toNodeHandler } from 'better-auth/node'
 import { nextCookies } from 'better-auth/next-js'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
@@ -14,13 +14,13 @@ export const auth = betterAuth({
     autoSignIn: false,
   },
   socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET|| "",
+    google: { 
+        clientId: process.env.GOOGLE_CLIENT_ID || "",
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET, 
     },
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID|| "",
-      clientSecret: process.env.GITHUB_CLIENT_SECRET|| "",
+      clientId: process.env.GITHUB_CLIENT_ID || "",
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     },
   },
   plugins: [nextCookies()]

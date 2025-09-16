@@ -103,10 +103,22 @@ importers:
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
+      zod:
+        specifier: ^4.0.16
+        version: 4.1.5
     devDependencies:
       '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@repo/backend-common':
+        specifier: workspace:*
+        version: link:../../packages/backend-common
+      '@repo/common':
+        specifier: workspace:*
+        version: link:../../packages/common
+      '@repo/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
@@ -116,6 +128,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.12
         version: 4.1.12
+      '@types/express':
+        specifier: ^5.0.3
+        version: 5.0.3
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
@@ -146,9 +161,6 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.10
         version: 9.0.10
-      '@types/ws':
-        specifier: ^8.18.1
-        version: 8.18.1
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
@@ -156,6 +168,9 @@ importers:
         specifier: ^8.18.3
         version: 8.18.3
     devDependencies:
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@repo/backend-common':
         specifier: workspace:*
         version: link:../../packages/backend-common
@@ -165,6 +180,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
 
   packages/auth:
     devDependencies:
