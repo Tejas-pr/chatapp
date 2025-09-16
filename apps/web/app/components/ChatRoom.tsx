@@ -1,15 +1,16 @@
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 import { ChatRoomClient } from "./ChatRoomClient";
+import { getRoomChats } from "action/room";
+import { redirect } from "next/navigation";
 
-async function getChats(roomId: string) {
-    const response = await axios.get(`${BACKEND_URL}/chats/${roomId}`);
-    return response.data.messages;
-}
 export async function ChatRoom({ id, slug }: {
-    id: string,
+    id: number,
     slug?: string
 }) {
-    const messages = await getChats(id);
-    return <ChatRoomClient id={id} messages={messages} currentUserId={id} slug={slug}/>
+    const response = await getRoomChats(id);
+    if(response?.error) {
+        redirect("/roomenter");
+    }
+    console.log("the messages:::::::::::", response?.messages);
+    console.log("the id :::::::::::", id);
+    return <ChatRoomClient id={id} messages={response?.messages} currentUserId={id} slug={slug}/>
 }

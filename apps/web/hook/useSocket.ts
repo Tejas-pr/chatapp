@@ -1,30 +1,19 @@
 import { useEffect, useState } from "react";
 import { WS_URL } from "../app/config";
-import { useRouter } from "next/navigation";
 
 export function useSocket() {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [socket, setSocket] = useState<WebSocket>();
-    const [token, SetToken] = useState("");
-    const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem("chat-app-token");
-        if(token) {
-            SetToken(token);
-        } else {
-            router.push("/signin");
-        }
+  useEffect(() => {
+    const ws = new WebSocket(WS_URL);
+    setSocket(ws);
 
-        const ws = new WebSocket(`${WS_URL}?token=${token}`);
-        ws.onopen = () => {
-            setLoading(false);
-            setSocket(ws);
-        }
-    }, []);
+    ws.onopen = () => setLoading(false);
+    ws.onclose = () => setLoading(true);
 
-    return {
-        socket,
-        loading
-    }
+    return () => ws.close();
+  }, []);
+
+  return { socket, loading };
 }

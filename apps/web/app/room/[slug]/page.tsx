@@ -1,43 +1,19 @@
-'use client';
-
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import { ChatRoom } from "../../components/ChatRoom";
 import { getRoomIdBySlug } from "action/room";
+import { redirect } from "next/navigation";
 
-export default function ChatRoom1() {
-  const searchParams = useParams();
-  const router = useRouter();
-  const slug = searchParams?.slug;
+export default async function ChatRoom1({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = params;
 
-  const [roomId, setRoomId] = useState<string | null>(null);
+  const response = await getRoomIdBySlug(slug);
 
-  useEffect(() => {
-    console.log("the slug is ======", slug);
-    async function getRoomId() {
-      if (!slug) {
-        router.push("/roomenter");
-        return;
-      }
-      try {
-        const response = await getRoomIdBySlug(slug);
-        console.log("the response in create Room", response);
-        // if (response?.room?.id) {
-        //   setRoomId(response);
-        // } else {
-        //   router.push("/roomenter");
-        // }
-      } catch (e) {
-        console.error(e);
-        // router.push("/roomenter");
-      }
-    }
-    getRoomId();
-  }, [slug, router]);
-
-  if (!roomId) {
-    return <p>Loading...</p>;
+  if (!response || response.error || !response.roomId) {
+    redirect("/roomenter");
   }
 
-  return <ChatRoom id={roomId} slug={slug} />;
+  return <ChatRoom id={response.roomId} slug={slug} />;
 }

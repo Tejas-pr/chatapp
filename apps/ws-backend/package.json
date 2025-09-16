@@ -12,6 +12,7 @@
     "@repo/typescript-config": "workspace:*",
     "@repo/backend-common": "workspace:*",
     "@repo/db": "workspace:*",
+    "@repo/auth": "workspace:*",
     "@types/ws": "^8.18.1"
   },
   "scripts": {

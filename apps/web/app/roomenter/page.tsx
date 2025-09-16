@@ -1,10 +1,8 @@
 "use client";
-import axios from "axios";
+
 import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
 import { LogoutButton } from "@/components/ui/logout";
-import { authClient } from "@repo/auth/client";
 import { creteNewRoom, getAllRooms } from "action/room";
 import { toast } from "sonner";
 

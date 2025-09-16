@@ -1,103 +1,91 @@
 import { WebSocket, WebSocketServer } from "ws";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { JWT_SECRET } from "@repo/backend-common/secret";
 import { prismaClient } from "@repo/db";
+import { getSessionFromRequest } from "./session";
 
 const wss = new WebSocketServer({ port: 8080 });
 
 interface User {
-    ws: WebSocket,
-    rooms: string[],
-    userId: string
+  ws: WebSocket;
+  rooms: string[];
+  userId: string;
 }
 
-// ugly - 1st approch
 const users: User[] = [];
 
-function checkUSer(token: string): string | null | undefined {
-  try {
-    const decode = jwt.verify(token, JWT_SECRET);
-    console.log("the decoded user is : ==============",decode);
+wss.on("connection", async (ws, request) => {
+  const session = await getSessionFromRequest(request);
+  const userId = session?.user.id;
+  console.log("userId", typeof(userId))
+  console.log("userId", userId)
 
-    if(typeof decode == "string") {
-      return null;
-    }
-
-    if(!decode || !decode.userId) {
-      return null;
-    }
-    return decode.userId;
-
-  } catch(e) {
-    return null;
-  }
-}
-
-wss.on('connection', function connection(ws, request) {
-  const url = request.url;
-  if(!url) {
-    return;
-  }
-  const queryParam = new URLSearchParams(url.split("?")[1]);
-  const token = queryParam.get("token") || "";
-  
-  const userId = checkUSer(token);
-  if(!userId) {
+  if (!userId) {
+    console.log("Close!!!!!");
     ws.close();
     return;
   }
 
-  users.push({
-    userId,
-    ws,
-    rooms: [],
-  })
+  // Remove old entry if user reconnects
+  const existingIndex = users.findIndex(u => u.userId === userId);
+  if (existingIndex !== -1) {
+    users.splice(existingIndex, 1);
+  }
 
-  ws.on('message', async function message(data) {
-    const parsedData = JSON.parse(data as unknown as string);
+  const user: User = { userId, ws, rooms: [] };
+  users.push(user);
 
-    if(parsedData.type === 'join_room') {
-      const user = users.find(x => x.ws === ws);
-      user?.rooms.push(parsedData.roomId);
+  ws.on("close", () => {
+    const idx = users.findIndex(u => u.ws === ws);
+    if (idx !== -1) {
+      users.splice(idx, 1);
     }
+  });
 
-    if(parsedData.type === 'leave_room') {
-      const user = users.find(x => x.ws === ws);
-      if(!user) {
-        ws.send("no such user");
-        return;
+  ws.on("message", async data => {
+    const parsedData = JSON.parse(data.toString());
+    console.log("the parsed data is :::::::::", parsedData);
+    console.log("the parsed data is :::::::::", parsedData.type);
+
+    if (parsedData.type === "join_room") {
+      const roomId = String(parsedData.roomId);
+      if (!user.rooms.includes(roomId)) {
+        user.rooms.push(roomId);
       }
-      user.rooms = user?.rooms.filter(x => x !== parsedData.roomId);
+      console.log("User joined room:", user.rooms);
     }
 
-    if(parsedData.type === 'chat') {
-      const roomId = parsedData.roomId;
+    if (parsedData.type === "leave_room") {
+      const roomId = String(parsedData.roomId);
+      user.rooms = user.rooms.filter(x => x !== roomId);
+    }
+
+    if (parsedData.type === "chat") {
+      const roomId = String(parsedData.roomId);
       const message = parsedData.message;
+      console.log("roomId:", roomId, "message:", message);
 
-    //   use queue to do the DB so you can reduce the delay in the websocket
       const created = await prismaClient.chat.create({
-        data: {
-          roomId,
-          message,
-          userId
-        }
-      })
+        data: { roomId: Number(roomId), message, userId },
+      });
 
-      if(created) {
-        // broadchat to everyone
-        users.forEach(user => {
-            if(user.rooms.includes(roomId)) {
-            user.ws.send(JSON.stringify({
+      if (created) {
+        console.log("User rooms after join:", user.rooms);
+        users.forEach(u => {
+          console.log("Broadcast check:", u.userId, u.rooms, "includes", roomId);
+          if (u.rooms.includes(roomId)) {
+            u.ws.send(
+              JSON.stringify({
                 type: "chat",
-                message: message,
-                roomId
-            }))
-            }
-        })
+                message: created.message,
+                roomId: created.roomId,
+                userId: created.userId,
+                createdAt: created.createdAt,
+              })
+            );
+          }
+        });
       } else {
         ws.send("unable to save the message in DB");
       }
     }
-    
   });
 });

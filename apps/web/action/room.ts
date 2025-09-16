@@ -3,7 +3,7 @@
 import { prismaClient } from "@repo/db";
 import { CreateRoomSchema } from "@repo/common/types";
 import { getUserSession } from "./utils";
-import { string, ZodError } from "zod";
+import { ZodError } from "zod";
 
 export const creteNewRoom = async (room: string) => {
   const session = await getUserSession();
@@ -91,28 +91,51 @@ export const getAllRooms = async () => {
 };
 
 export const getRoomIdBySlug = async (slugname: string) => {
-    const session = await getUserSession();
-    try {
-        if (!session) {
-            return { error: "Unauthorized" };
-        }
-
-        if (!slugname || typeof slugname !== "string") {
-            return { error: "Invalid slug" };
-        }
-
-        const room = await prismaClient.room.findFirst({
-            where: {
-                slug: slugname
-            }
-        })
-
-        if (!room) {
-            return { error: "Room not found" };
-        }
-        return { roomId: room.id };
-
-    } catch (error) {
-        console.error(error);
+  const session = await getUserSession();
+  try {
+    if (!session) {
+      return { error: "Unauthorized" };
     }
+
+    if (!slugname || typeof slugname !== "string") {
+      return { error: "Invalid slug" };
+    }
+
+    const room = await prismaClient.room.findFirst({
+      where: {
+        slug: slugname,
+      },
+    });
+
+    if (!room) {
+      return { error: "Room not found" };
+    }
+    return { roomId: room.id };
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getRoomChats = async (roomId: number) => {
+  const session = await getUserSession();
+  try {
+    if (!session) {
+      return { error: "Unauthorized" };
+    }
+    const messages = await prismaClient.chat.findMany({
+      where: {
+        roomId,
+      },
+      orderBy: {
+        id: "asc",
+      },
+      take: 50,
+    });
+
+    return {
+      messages
+    };
+  } catch (error) {
+    console.error(error);
+  }
 };

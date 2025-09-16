@@ -1,5 +1,5 @@
 import { prismaClient } from "@repo/db";
-import { betterAuth, jwt } from 'better-auth'
+import { betterAuth } from 'better-auth'
 export { fromNodeHeaders, toNodeHandler } from 'better-auth/node'
 import { nextCookies } from 'better-auth/next-js'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
