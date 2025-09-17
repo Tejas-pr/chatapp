@@ -102,8 +102,17 @@ Users, Chat, Rooms
 
 Added createdAt timestamps for tracking messages
 
+### 🚀 Redis Setup
+
+I'm using **Redis** together with **BullMQ** to implement a
+job queue for the WebSocket chat application.
+
+![Redis running in Docker](redis-ref/image.png)
+
+This setup lets the WebSocket server push messages into Redis, and a
+worker service consumes them asynchronously to store in the database ---
+making the chat system more scalable and reliable.
+
 ### 📝 License
 
 This project is licensed under @Tejas-pr.
-
-Thank you!!

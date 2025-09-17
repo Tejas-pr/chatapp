@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useSocket } from "../../hook/useSocket";
-import { toast } from "sonner";
-import { Spinner, type SpinnerProps } from '@/components/ui/shadcn-io/spinner';
 
 type ChatMessage = {
   message: string;
@@ -10,45 +8,42 @@ type ChatMessage = {
   userId?: string;
 };
 
-export function ChatRoomClient({messages, id, currentUserId, slug}: {
-  messages: any;
-  id: number;
-  currentUserId: number;
+export function ChatRoomClient({
+  messages,
+  id,
+  currentUserId,
+  slug,
+}: {
+  messages: ChatMessage[];
+  id: string;
+  currentUserId: string;
   slug?: string;
 }) {
   const { socket, loading } = useSocket();
-  const [screenLoading, setScreenLoading] = useState(false);
   const [chats, setChats] = useState(messages);
   const [currentMessage, setCurrentMessage] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!socket || loading) return;
-    setScreenLoading(true);
 
-    const joinRoom = () => {
+    setTimeout(() => {
       socket.send(
         JSON.stringify({
           type: "join_room",
           roomId: id,
         })
       );
-      setScreenLoading(false);
-      toast("Room joined successfully!!!");
-    };
-
-    setTimeout(() => {
-      joinRoom();
     }, 5000);
 
     const handleMessage = (event: MessageEvent) => {
       const parsedData = JSON.parse(event.data);
       if (parsedData.type === "chat") {
-        setChats((c: any) => [
+        setChats((c) => [
           ...c,
           {
             message: parsedData.message,
-            createdAt: parsedData.createdAt ?? new Date().toISOString(),
+            createdAt: new Date().toISOString(),
             userId: parsedData.userId,
           },
         ]);
@@ -65,15 +60,6 @@ export function ChatRoomClient({messages, id, currentUserId, slug}: {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chats]);
-
-
-  if (screenLoading) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#D3D3D3] z-50">
-        <Spinner variant="bars" className="w-12 h-12 text-white" />
-      </div>
-    );
-  }
 
   return (
     <div className="relative flex h-screen bg-gray-900 text-white">
@@ -94,8 +80,8 @@ export function ChatRoomClient({messages, id, currentUserId, slug}: {
         </p>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {chats.map((m: any, index: number) => {
-            const isMine = String(m.userId) === String(currentUserId);
+          {chats.map((m, index) => {
+            const isMine = m.userId === currentUserId;
             return (
               <div
                 key={index}
@@ -133,7 +119,6 @@ export function ChatRoomClient({messages, id, currentUserId, slug}: {
             onChange={(e) => setCurrentMessage(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && currentMessage.trim()) {
-                toast("message sent!!");
                 socket?.send(
                   JSON.stringify({
                     type: "chat",
@@ -147,8 +132,7 @@ export function ChatRoomClient({messages, id, currentUserId, slug}: {
           />
           <button
             onClick={() => {
-
-              toast("message sent!!");
+              if (!currentMessage.trim()) return;
               socket?.send(
                 JSON.stringify({
                   type: "chat",
