@@ -1,5 +1,4 @@
 import express from "express";
-import { CreateRoomSchema } from "@repo/common/types";
 import { PORT_BE } from "@repo/backend-common/secret";
 import { middleware } from "./middleware";
 import { prismaClient } from "@repo/db";

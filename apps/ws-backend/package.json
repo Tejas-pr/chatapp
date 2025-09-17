@@ -5,14 +5,16 @@
   "main": "index.js",
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.10",
+    "bullmq": "^5.58.5",
+    "ioredis": "^5.7.0",
     "jsonwebtoken": "^9.0.2",
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@repo/auth": "workspace:*",
     "@repo/backend-common": "workspace:*",
     "@repo/db": "workspace:*",
-    "@repo/auth": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/ws": "^8.18.1"
   },
   "scripts": {

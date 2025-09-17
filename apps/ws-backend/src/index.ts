@@ -1,8 +1,13 @@
 import { WebSocket, WebSocketServer } from "ws";
 import { prismaClient } from "@repo/db";
 import { getSessionFromRequest } from "./session";
+import { Queue } from "bullmq";
+import { redisConnection } from "@repo/backend-common/secret";
 
 const wss = new WebSocketServer({ port: 8080 });
+const chatQueue = new Queue("chat-queue", {
+  connection: redisConnection
+})
 
 interface User {
   ws: WebSocket;
@@ -63,29 +68,24 @@ wss.on("connection", async (ws, request) => {
       const message = parsedData.message;
       console.log("roomId:", roomId, "message:", message);
 
-      const created = await prismaClient.chat.create({
-        data: { roomId: Number(roomId), message, userId },
-      });
-
-      if (created) {
-        console.log("User rooms after join:", user.rooms);
-        users.forEach(u => {
-          console.log("Broadcast check:", u.userId, u.rooms, "includes", roomId);
-          if (u.rooms.includes(roomId)) {
-            u.ws.send(
-              JSON.stringify({
-                type: "chat",
-                message: created.message,
-                roomId: created.roomId,
-                userId: created.userId,
-                createdAt: created.createdAt,
-              })
-            );
-          }
-        });
-      } else {
-        ws.send("unable to save the message in DB");
-      }
+      await chatQueue.add("new-message", {
+        roomId,
+        message,
+        userId
+      })
+      users.forEach((u) => {
+        if(u.rooms.includes(roomId)) {
+          u.ws.send(
+            JSON.stringify({
+              type: "chat",
+              message,
+              roomId,
+              userId,
+              createdAt: new Date().toISOString(),
+            })
+          )
+        }
+      })
     }
   });
 });
