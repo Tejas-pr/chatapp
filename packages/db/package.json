@@ -12,7 +12,8 @@
     "dev": "tsup src/* --watch",
     "format": "prisma format",
     "lint": "eslint . --max-warnings 0",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "prisma:generate": "prisma generate"
   },
   "exports": {
     ".": "./src/index.ts"

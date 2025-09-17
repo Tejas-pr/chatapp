@@ -15,6 +15,9 @@ const chatWorker = new Worker(
   { connection: redisConnection }
 );
 
+chatWorker.on("error", (err) => console.error("Worker connection error:", err));
+chatWorker.on("active", (job) => console.log("Processing job:", job.id));
+
 chatWorker.on("completed", (job) => {
   console.log(`✅ Job ${job.id} completed`);
 });

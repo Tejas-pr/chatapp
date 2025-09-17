@@ -1,5 +1,4 @@
 import { WebSocket, WebSocketServer } from "ws";
-import { prismaClient } from "@repo/db";
 import { getSessionFromRequest } from "./session";
 import { Queue } from "bullmq";
 import { redisConnection } from "@repo/backend-common/secret";
@@ -8,6 +7,10 @@ const wss = new WebSocketServer({ port: 8080 });
 const chatQueue = new Queue("chat-queue", {
   connection: redisConnection
 })
+
+chatQueue.waitUntilReady()
+  .then(() => console.log("Queue connected to Redis"))
+  .catch((err) => console.error("Queue connection failed:", err));
 
 interface User {
   ws: WebSocket;

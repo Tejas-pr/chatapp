@@ -27,12 +27,14 @@ export function ChatRoomClient({
   useEffect(() => {
     if (!socket || loading) return;
 
-    socket.send(
-      JSON.stringify({
-        type: "join_room",
-        roomId: id,
-      })
-    );
+    setTimeout(() => {
+      socket.send(
+        JSON.stringify({
+          type: "join_room",
+          roomId: id,
+        })
+      );
+    }, 5000);
 
     const handleMessage = (event: MessageEvent) => {
       const parsedData = JSON.parse(event.data);
