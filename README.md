@@ -13,13 +13,15 @@ The project uses **Prisma ORM** with **PostgreSQL** for data persistence and fol
 
 ## 🛠 Tech Stack
 
-- **Frontend:** Next.js
-- **Backend HTTP:** Node.js, Express
-- **Backend WebSocket:** ws
+- **Frontend:** Next.js (with Server Actions)
+- **Job Queue & Messaging:** BullMQ + Redis
+- **Backend HTTP:** Next.js API Routes (migrated from Express)
+- **Backend WebSocket:** ws (custom WebSocket server)
 - **Database & ORM:** Prisma + PostgreSQL
+- **Authentication:** Better Auth (Google & GitHub OAuth providers)
+- **Real-Time Communication:** WebSocket Rooms + Event Broadcasting
 - **Monorepo Tooling:** Turborepo
-- **Authentication:** JWT
-- **Real-Time Communication:** WebSocket Rooms, Event Broadcasting
+- **Infrastructure:** Docker (for Redis and other services)
 
 ---
 
@@ -27,12 +29,16 @@ The project uses **Prisma ORM** with **PostgreSQL** for data persistence and fol
 
 - Real-time messaging with **WebSocket**
 - Room creation, joining, and management
-- JWT-based authentication for security
+- Secure authentication with **Better Auth** (Google & GitHub login)
+- **Job queueing** with BullMQ (Redis) for scalable message handling
 - Database persistence for messages, rooms, and users
 - Monorepo architecture for better scalability and modularity
 - Professional Git workflow with **3 branches**:
   - `master` → Production-ready code
   - `staging` → Pre-production testing
+  - `dev` → Active development
+
+---
 
 ## 🌱 Git Workflow
 
@@ -73,8 +79,25 @@ pnpm install
 Create a .env file in the root:
 
 ```bash
-DATABASE_URL=postgresql://user:password@host:port/dbname
-JWT_SECRET=your-secret-key
+JWT_SECRET=""
+NODE_ENV=""
+# OAUTH
+NEXT_PUBLIC_API_URL=""
+BETTER_AUTH_SECRET=""
+BETTER_AUTH_URL=""
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
+# backend-common
+JWT_SECRET=""
+CORS_ORIGIN_FE=""
+PORT_BE=""
+# ws-backend - worker.ts
+REDIS_HOST=""
+REDIS_PORT=""
+# prisma-DB
+DATABASE_URL=""
 ```
 
 4️⃣ Run Prisma migrations
@@ -83,6 +106,7 @@ Inside db folder
 
 ```bash
 pnpm prisma migrate dev
+npx prisma generate
 ```
 
 5️⃣ Start the apps
@@ -91,7 +115,9 @@ In root path
 
 ```bash
 # Start all apps with Turborepo
-pnpm dev
+pnpm install
+pnpm run build
+pnpm run dev
 ```
 
 ### 📊 Prisma ORM & Database
@@ -102,16 +128,31 @@ Users, Chat, Rooms
 
 Added createdAt timestamps for tracking messages
 
-### 🚀 Redis Setup
+# 🚀 Migration Updates
 
-I'm using **Redis** together with **BullMQ** to implement a
-job queue for the WebSocket chat application.
+## 🔧 Infrastructure
+
+- Integrated **Redis** with **BullMQ** to power the job queue for the WebSocket chat application.
+- This setup allows the WebSocket server to push messages into Redis, while a dedicated worker service consumes them asynchronously to store in the database.
+- ✅ Result: More **scalable** and **reliable** chat system.
 
 ![Redis running in Docker](redis-ref/image.png)
 
-This setup lets the WebSocket server push messages into Redis, and a
-worker service consumes them asynchronously to store in the database ---
-making the chat system more scalable and reliable.
+---
+
+## 🔐 Authentication
+
+- Migrated from **basic auth** to modern authentication providers.
+- Added **Google** and **GitHub** login for a smoother and more secure user experience.
+
+---
+
+## 🌐 Backend Architecture
+
+- Transitioned from a traditional **HTTP backend** to **Next.js Server Actions**.
+- This simplifies data fetching, reduces API overhead, and improves developer experience.
+
+---
 
 ### 📝 License
 
