@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+        - BETTER_AUTH_URL=${BETTER_AUTH_URL}
+        - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+        - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+        - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+        - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+        - DATABASE_URL=${DATABASE_URL}
+        - NODE_ENV=${NODE_ENV}
+    command: pnpm --filter web start
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - ws-backend
+
+  ws-backend:
+    build:
+      context: .
+      dockerfile: apps/ws-backend/Dockerfile
+      args:
+        - REDIS_HOST=${REDIS_HOST}
+        - REDIS_PORT=${REDIS_PORT}
+        - JWT_SECRET=${JWT_SECRET}
+        - CORS_ORIGIN_FE=${CORS_ORIGIN_FE}
+        - PORT_BE=${PORT_BE}
+        - DATABASE_URL=${DATABASE_URL}
+        - NODE_ENV=${NODE_ENV}
+    command: pnpm --filter ws-backend start
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+
+  http-backend:
+    build:
+      context: .
+      dockerfile: apps/http-backend/Dockerfile
+      args:
+        - JWT_SECRET=${JWT_SECRET}
+        - CORS_ORIGIN_FE=${CORS_ORIGIN_FE}
+        - PORT_BE=${PORT_BE}
+        - DATABASE_URL=${DATABASE_URL}
+        - NODE_ENV=${NODE_ENV}
+    command: pnpm --filter http-backend start
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    depends_on:
+      - redis

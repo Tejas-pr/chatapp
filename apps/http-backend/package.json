@@ -19,6 +19,9 @@
     "@repo/db": "workspace:*"
   },
   "scripts": {
+    "build": "tsc -b",
+    "start": "node dist/index.js",
+    "dev": "tsc -b && node dist/index.js"
   },
   "keywords": [],
   "author": "",

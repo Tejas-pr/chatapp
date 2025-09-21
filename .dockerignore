@@ -1,0 +1,32 @@
+# Node modules (you install inside the container)
+node_modules
+**/node_modules
+
+# Logs
+logs
+*.log
+
+# Build output
+dist
+build
+.out
+.next
+
+# Git
+.git
+.gitignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env files (if you don’t want secrets in images)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Docker files themselves (optional)
+Dockerfile
+docker-compose.yml
